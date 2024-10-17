@@ -65,5 +65,53 @@ jobs:
           python -V
           # We use --lock to only update the lock file without installing the packages
           poetry add --lock $(sed -e 's/#.*//' -e '/^$$/ d' < requirements.txt)
-          
+
+      - name: Lock without Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -rf .venv
+          rm -f poetry.lock
+          poetry lock --no-cache
+      
+      - name: Lock with Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -f poetry.lock
+          poetry lock
+
+      - name: Install without Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -rf .venv
+          poetry install --no-cache
+
+      - name: Install with Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -rf .venv
+          poetry install
+
+      - name: Update without Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -rf .venv
+          poetry update --no-cache
+
+      - name: Update with Cache Operation
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          rm -rf .venv
+          poetry update
+
+      - name: Add package
+        run: |
+          eval "$(pyenv init -)"
+          python -V
+          poetry add numpy
       
