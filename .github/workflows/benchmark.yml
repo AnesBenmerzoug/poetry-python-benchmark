@@ -44,8 +44,8 @@ jobs:
           pyenv global ${{ matrix.python_version }}
 
           # Install Poetry and add it to PATH
-          pip install pipx
-          pipx install poetry==${{ env.POETRY_VERSION }}
+          python --version
+          curl -sSL https://install.python-poetry.org | python - --version ${{ env.POETRY_VERSION }}
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
           POETRY_BIN="${HOME}/.poetry/bin"
@@ -59,7 +59,6 @@ jobs:
       - name: Import Operation
         run: |
           eval "$(pyenv init -)"
-          which python
           python -V
           # We use --lock to only update the lock file without installing the packages
           poetry add --lock $(sed -e 's/#.*//' -e '/^$$/ d' < requirements.txt)
