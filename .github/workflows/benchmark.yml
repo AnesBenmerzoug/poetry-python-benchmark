@@ -1,0 +1,70 @@
+name: benchmark
+
+on:
+  workflow_dispatch:
+
+defaults:
+  shell: bash
+
+jobs:
+  poetry:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python_version: ["3.11", "3.12", "3.13", "3.13t"]
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Install python build tools
+          # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+          run: |
+            sudo apt-get update -y
+            sudo apt-get install -y make build-essential libssl-dev zlib1g-dev \
+            libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+            libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev ffmpeg
+
+        - name: Install pyenv, python and poetry
+          run: |
+            curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+            PYENV_ROOT="$HOME/.pyenv"
+            PYENV_BIN="$PYENV_ROOT/bin"
+            export PATH="$PYENV_BIN:$PATH"
+            echo "$PYENV_BIN" >> $GITHUB_PATH
+            echo "PYENV_ROOT=$PYENV_ROOT" >> $GITHUB_ENV
+            eval "$(pyenv init -)"
+            pyenv --version
+
+            # Install Python and set it as default
+            pyenv install ${{ matrix.python_version }}
+            pyenv global ${{ matrix.python_version }}
+
+            # Install Poetry and add it to PATH
+            # pip install pipx
+            # pipx install poetry==1.8.3
+            # poetry config virtualenvs.create true --local
+            # poetry config virtualenvs.in-project true --local
+            # POETRY_BIN="${HOME}/.poetry/bin"
+            # echo "$POETRY_BIN" >> $GITHUB_PATH
+
+        - name: Install and configure Poetry
+          uses: snok/install-poetry@v1
+          with:
+            version: ${{ inputs.poetry_version }}
+            virtualenvs-create: true
+            virtualenvs-in-project: true
+            installer-parallel: true
+            
+        - name: Install hyperfine
+          run: |
+            wget https://github.com/sharkdp/hyperfine/releases/download/v1.18.0/hyperfine_1.18.0_amd64.deb
+            sudo apt install ./hyperfine_1.18.0_amd64.deb
+
+        - name: import
+          run: |
+            which python
+            python -V
+            # We use --lock to only update the lock file without installing the packages
+            poetry add --lock $(sed -e 's/#.*//' -e '/^$$/ d' < requirements.txt)
+            
+        
