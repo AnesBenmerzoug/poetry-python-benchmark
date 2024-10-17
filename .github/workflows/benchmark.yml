@@ -67,7 +67,7 @@ jobs:
           # We use --lock to only update the lock file without installing the packages
           hyperfine \
             --prepare 'git restore . && rm -f poetry.lock' \
-            'poetry add --lock $(sed -e \'s/#.*//\' -e \'/^$$/ d\' < requirements.txt)'
+            "poetry add --lock $(sed -e 's/#.*//' -e '/^$$/ d' < requirements.txt)"
 
       - name: Lock without Cache Operation
         run: |
