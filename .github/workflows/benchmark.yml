@@ -17,6 +17,7 @@ jobs:
   poetry:
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         python_version: ["3.11", "3.12", "3.13", "3.13t"]
     steps:
