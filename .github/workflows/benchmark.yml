@@ -136,7 +136,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           name: benchmark-stats
-          path: *.json
+          path: '*.json'
           if-no-files-found: fail
           overwrite: true
           retention-days: 10
