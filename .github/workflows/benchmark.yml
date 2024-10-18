@@ -51,7 +51,7 @@ jobs:
           python --version
           pip install pipx
           python -m pipx ensurepath
-          pipx install poetry==${{ env.POETRY_VERSION }}
+          pipx install --verbose  poetry==${{ env.POETRY_VERSION }}
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
           POETRY_BIN="${HOME}/.poetry/bin"
