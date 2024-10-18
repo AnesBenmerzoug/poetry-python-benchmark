@@ -165,19 +165,36 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with: 
           name: benchmark-stats
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Combine Results
         run: |
           python scripts/combine_benchmark_results.py
+
       - uses: actions/upload-artifact@v4
         with:
           name: combined-benchmark-stats
           path: combined_stats.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 10
+
+      - name: Install pipx
+        uses: CfirTsabari/actions-pipx@v1
+      - name: Plot Results
+        run: pipx run scripts/plot_benchmark_results.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-plots
+          path: '*.png'
           if-no-files-found: error
           overwrite: true
           retention-days: 10
