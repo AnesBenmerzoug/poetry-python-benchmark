@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "matplotlib",
+# ]
+# ///
+
 import json
 from pathlib import Path
 
@@ -35,7 +43,7 @@ def main():
     }
     ```
     """
-    root_dir = Path(__file__).parent
+    root_dir = Path(__file__).parent.parent
     all_results = []
     for json_file in root_dir.glob("*.json"):
         with json_file.open() as f:
