@@ -137,7 +137,7 @@ jobs:
         with:
           name: benchmark-stats
           path: '*.json'
-          if-no-files-found: fail
+          if-no-files-found: error
           overwrite: true
           retention-days: 10
   
@@ -161,7 +161,7 @@ jobs:
         with:
           name: combined-benchmark-stats
           path: combined_stats.json
-          if-no-files-found: fail
+          if-no-files-found: error
           overwrite: true
           retention-days: 10
       
