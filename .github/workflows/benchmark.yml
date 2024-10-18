@@ -173,7 +173,7 @@ jobs:
           python-version: '3.12'
       - name: Combine Results
         run: |
-          python combine_benchmark_results.py
+          python scripts/combine_benchmark_results.py
       - uses: actions/upload-artifact@v4
         with:
           name: combined-benchmark-stats
