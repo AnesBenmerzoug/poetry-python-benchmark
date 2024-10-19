@@ -26,11 +26,13 @@ def main():
     for (command_name, group_results) in groupby(results, key=operator.itemgetter("command")):
         group_results = list(group_results)
         fig, ax = plt.subplots()
-        python_versions = [b["parameters"]["python_version"] for b in group_results]
-        times_mean = [b["mean"] for b in group_results]
-        times_stddev = [b["stddev"] for b in group_results]
+        python_versions = [result["parameters"]["python_version"] for result in group_results]
+        times_mean = [result["mean"] for result in group_results]
+        times_stddev = [result["stddev"] for result in group_results]
         ax.errorbar(x=python_versions, y=times_mean, yerr=times_stddev, capsize=2)
-        fig.savefig(f"errorbar_{command_name}.png")    
+        ax.set_xlabel("Python Version")
+        ax.set_ylabel("Time (s)")
+        fig.savefig(f"errorbar_{command_name}.png")  
 
 
 if __name__ == "__main__":
