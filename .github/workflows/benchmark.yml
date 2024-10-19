@@ -154,7 +154,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/main'
         with:
-          name: benchmark-stats
+          name: benchmark-stats-${{ env.PYTHON_VERSION }}
           path: '*.json'
           if-no-files-found: error
           overwrite: true
@@ -170,7 +170,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with: 
-          name: benchmark-stats
+          pattern: benchmark-stats-*
 
       - uses: actions/setup-python@v5
         with:
