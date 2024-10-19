@@ -2,16 +2,20 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "matplotlib",
+#   "matplotlib",
+#   "seaborn",
+#   "pandas",  
 # ]
 # ///
 import logging
 import json
-import operator
-from itertools import groupby
 from pathlib import Path
 
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_theme(style="whitegrid", palette="pastel", context="notebook")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,30 +32,39 @@ def main():
         data = json.load(f)
     results = data["results"]
     
-    # Sort results to put results for same command in consecutive order
-    results = list(sorted(results, key=lambda x: x["command"]))
-        
-    for (command_name, group_results) in groupby(results, key=operator.itemgetter("command")):
-        logger.info(f"Plotting results for command {command_name}")
-        
-        # Sort group results by python version in ascending order
-        group_results = list(sorted(group_results, key=lambda x: x["parameters"]["python_version"]))
-        
-        
-        python_versions = [result["parameters"]["python_version"] for result in group_results]
-        times_mean = [result["mean"] for result in group_results]
-        times_stddev = [result["stddev"] for result in group_results]
-            
+    results_df = pd.DataFrame(results)
+    results_df["python_version"] = results_df["parameters"].map(lambda x: x["python_version"])
+    results_df["with_cache"] = results_df["command"].map(lambda x: "with-cache" in x)
+    results_df["command"] = results_df["command"].map(lambda x: x.split("-")[0])
+    results_df = results_df.explode("times").reset_index(drop=True)
+    results_df = results_df.sort_values(["python_version", "command"])
+    
+    for command in results_df["command"].unique():
         fig, ax = plt.subplots()
-        ax.errorbar(x=list(range(len(times_mean))), y=times_mean, yerr=times_stddev, capsize=2)
-        ax.set_xticks(ticks=list(range(len(times_mean))), labels=list(map(str, python_versions)))
+        data = results_df.query(f"command == '{command}'")
+        if len(data["with_cache"].unique()) == 1:
+            sns.barplot(
+                data=data,    
+                x="python_version",
+                y="times",
+                ax=ax,
+            )
+        else:
+            sns.barplot(
+                data=data,    
+                x="python_version",
+                y="times",
+                hue="with_cache",
+                ax=ax,
+            )
         ax.set_xlabel("Python Version")
         ax.set_ylabel("Time (s)")
-        ax.set_title(command_name.replace("-", " ").title())
+        ax.set_title(command.title())
+        sns.despine(trim=True)
         
-        figure_file = root_dir / f"errorbar_{command_name}.png"
+        figure_file = root_dir / f"barplot_{command}.png"
         logger.info(f"Saving plot to {figure_file}")
-        fig.savefig(figure_file)  
+        fig.savefig(figure_file, dpi=150)
 
 
 if __name__ == "__main__":
