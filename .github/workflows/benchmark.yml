@@ -158,7 +158,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/main'
         with:
-          name: benchmark-stats-${{ env.PYTHON_VERSION }}
+          name: benchmark-stats-${{ matrix.python_version }}
           path: '*.json'
           if-no-files-found: error
           overwrite: true
@@ -175,7 +175,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with: 
-          pattern: benchmark-stats-*
+          pattern: 'benchmark-stats-*'
+          merge-multiple: true
 
       - uses: actions/setup-python@v5
         with:
