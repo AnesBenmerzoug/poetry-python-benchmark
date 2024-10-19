@@ -12,6 +12,8 @@ defaults:
 
 env:
   POETRY_VERSION: 1.8.4
+  PIPX_VERSION: 1.7.1
+  MAX_RUNS: 3
 
 jobs:
   poetry:
@@ -50,7 +52,7 @@ jobs:
 
           # Install Poetry and add it to PATH
           python --version
-          pip install pipx
+          pip install pipx==${{ env.PIPX_VERSION }}
           python -m pipx ensurepath
           pipx install --verbose  poetry==${{ env.POETRY_VERSION }}
           poetry config virtualenvs.create true --local
@@ -68,7 +70,7 @@ jobs:
           eval "$(pyenv init -)"
           python -V
           # We use --lock to only update the lock file without installing the packages
-          hyperfine --command-name=import --show-output --export-json=import_${{ matrix.python_version }}.json --max-runs=3 \
+          hyperfine --command-name=import --show-output --export-json=import_${{ matrix.python_version }}.json --max-runs=${{ env.MAX_RUNS }} \
             --prepare 'git restore . && rm -f poetry.lock' \
             'poetry add --lock --no-cache $(cat requirements.txt | sed -e "s/#.*//" -e "/^$$/ d" | tr "\n" " ")'
 
@@ -78,7 +80,7 @@ jobs:
           python -V
           hyperfine --command-name=lock-without-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=lock_without_cache_${{ matrix.python_version }}.json \
             --prepare 'rm -rf ~/.cache/pip && rm -rf .venv && rm -f poetry.lock' \
             'poetry lock --no-cache'
@@ -89,7 +91,7 @@ jobs:
           python -V
           hyperfine --command-name=lock-with-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --warmup=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --warmup=3 --show-output \
             --export-json=lock_with_cache_${{ matrix.python_version }}.json  \
             --prepare 'rm -f poetry.lock' \
             'poetry lock'
@@ -100,7 +102,7 @@ jobs:
           python -V
           hyperfine --command-name=install-without-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=install_without_cache_${{ matrix.python_version }}.json \
             --prepare 'rm -rf ~/.cache/pip && rm -rf .venv' \
             'poetry install --no-cache'
@@ -111,7 +113,7 @@ jobs:
           python -V
           hyperfine --command-name=install-with-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --warmup=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --warmup=3 --show-output \
             --export-json=install_with_cache_${{ matrix.python_version }}.json \
             --prepare 'rm -rf .venv' \
             'poetry install'
@@ -122,7 +124,7 @@ jobs:
           python -V
           hyperfine --command-name=update-without-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=update_without_cache_${{ matrix.python_version }}.json \
             --prepare 'rm -rf ~/.cache/pip && rm -rf .venv' \
             'poetry update --no-cache'
@@ -133,7 +135,7 @@ jobs:
           python -V
           hyperfine --command-name=update-with-cache \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --warmup=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --warmup=3 --show-output \
             --export-json=update_with_cache_${{ matrix.python_version }}.json \
             --prepare 'rm -rf .venv' \
             'poetry update'
@@ -144,7 +146,7 @@ jobs:
           python -V
           hyperfine --command-name=add-package \
             --parameter-list python_version ${{ matrix.python_version }} \
-            --max-runs=3 --show-output \
+            --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=add_package_${{ matrix.python_version }}.json \
             --prepare 'git restore . ' \
             'poetry --no-cache add numpy'
@@ -188,6 +190,9 @@ jobs:
 
       - name: Install pipx
         uses: CfirTsabari/actions-pipx@v1
+        with:
+          pipx-version: ${{ env.PIPX_VERSION }}
+
       - name: Plot Results
         run: pipx run scripts/plot_benchmark_results.py
 
