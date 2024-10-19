@@ -16,8 +16,9 @@ env:
   MAX_RUNS: 3
 
 jobs:
-  poetry:
-    runs-on: ubuntu-22.04
+  benchmark:
+    name: Run Poetry Benchmarks
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -163,8 +164,9 @@ jobs:
           overwrite: true
           retention-days: 10
   
-  gather:
-    runs-on: ubuntu-22.04
+  plot:
+    name: Collect and Plot Benchmark Results
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [poetry]
     steps:
