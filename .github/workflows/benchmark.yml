@@ -168,7 +168,7 @@ jobs:
     name: Collect and Plot Benchmark Results
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [poetry]
+    needs: [benchmark]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
