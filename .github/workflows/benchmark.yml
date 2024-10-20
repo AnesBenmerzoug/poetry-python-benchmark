@@ -93,7 +93,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=lock_without_cache_${{ matrix.python_version }}.json \
-            --prepare 'rm -rf ~/.cache/pip && rm -rf .venv && rm -f poetry.lock' \
+            --prepare 'rm -rf ~/.cache/pip && rm -rf .venv && rm -f poetry.lock && poetry cache clear --all' \
             'poetry lock --no-cache'
       
       - name: Lock with Cache Operation
@@ -115,7 +115,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=install_without_cache_${{ matrix.python_version }}.json \
-            --prepare 'rm -rf ~/.cache/pip && rm -rf .venv' \
+            --prepare 'rm -rf ~/.cache/pip && poetry cache clear --all && rm -rf .venv' \
             'poetry install --no-cache'
 
       - name: Install with Cache Operation
@@ -137,7 +137,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=update_without_cache_${{ matrix.python_version }}.json \
-            --prepare 'rm -f poetry.lock && poetry lock --no-update && poetry install --sync && rm -rf ~/.cache/pip' \
+            --prepare 'rm -f poetry.lock && poetry lock --no-update && poetry install --sync && rm -rf ~/.cache/pip && poetry cache clear --all' \
             'poetry update --no-cache'
 
       - name: Update with Cache Operation
@@ -159,7 +159,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=add_package_${{ matrix.python_version }}.json \
-            --prepare 'rm -f poetry.lock && poetry lock --no-update && poetry install --sync && rm -rf ~/.cache/pip' \
+            --prepare 'rm -f poetry.lock && poetry lock --no-update && poetry install --sync && rm -rf ~/.cache/pip && poetry cache clear --all' \
             --cleanup 'poetry remove numpy' \
             'poetry add --no-cache numpy'
 
