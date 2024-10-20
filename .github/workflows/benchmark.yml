@@ -130,7 +130,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=update_without_cache_${{ matrix.python_version }}.json \
-            --prepare 'rm -rf ~/.cache/pip && rm -rf .venv' \
+            --prepare 'git restore . && poetry install --sync && rm -rf ~/.cache/pip' \
             'poetry update --no-cache'
 
       - name: Update with Cache Operation
@@ -141,7 +141,7 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --warmup=3 --show-output \
             --export-json=update_with_cache_${{ matrix.python_version }}.json \
-            --prepare 'rm -rf .venv' \
+            --prepare 'git restore . && poetry install --sync' \
             'poetry update'
 
       - name: Add package
@@ -152,8 +152,8 @@ jobs:
             --parameter-list python_version ${{ matrix.python_version }} \
             --max-runs=${{ env.MAX_RUNS }} --show-output \
             --export-json=add_package_${{ matrix.python_version }}.json \
-            --prepare 'git restore . ' \
-            'poetry --no-cache add numpy'
+            --prepare 'git restore . && poetry install --sync && rm -rf ~/.cache/pip' \
+            'poetry add --no-cache numpy'
 
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/main'
