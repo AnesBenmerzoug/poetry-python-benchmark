@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # At 18:00 on Monday
+    # https://crontab.guru/#0_18_*_*_1
+    - cron:  '0 18 * * 1'
   workflow_dispatch:
 
 defaults:
@@ -50,9 +54,9 @@ jobs:
           # Install Python and set it as default
           pyenv install --skip-existing ${{ matrix.python_version }}
           pyenv global ${{ matrix.python_version }}
+          python -VV
 
           # Install Poetry and add it to PATH
-          python --version
           pip install pipx==${{ env.PIPX_VERSION }}
           python -m pipx ensurepath
           pipx install --verbose  poetry==${{ env.POETRY_VERSION }}
