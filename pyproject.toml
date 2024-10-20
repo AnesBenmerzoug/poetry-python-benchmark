@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "poetry-python3.13-benchmark"
+name = "poetry-python-benchmark"
 version = "0.1.0"
 description = ""
 authors = ["Anes Benmerzoug <anes.benmerzoug@gmail.com>"]
