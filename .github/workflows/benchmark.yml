@@ -13,7 +13,7 @@ defaults:
 env:
   POETRY_VERSION: 1.8.4
   PIPX_VERSION: 1.7.1
-  MAX_RUNS: 10
+  MAX_RUNS: 20
 
 jobs:
   benchmark:
