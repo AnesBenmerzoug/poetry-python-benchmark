@@ -62,7 +62,7 @@ def main():
         ax.set_title(command.title())
         sns.despine(trim=True)
         
-        figure_file = root_dir / f"barplot_{command}.png"
+        figure_file = root_dir / f"plot_{command}.png"
         logger.info(f"Saving plot to {figure_file}")
         fig.savefig(figure_file, dpi=150)
 
