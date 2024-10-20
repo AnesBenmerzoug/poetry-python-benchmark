@@ -43,14 +43,14 @@ def main():
         fig, ax = plt.subplots()
         data = results_df.query(f"command == '{command}'")
         if len(data["with_cache"].unique()) == 1:
-            sns.barplot(
+            sns.violinplot(
                 data=data,    
                 x="python_version",
                 y="times",
                 ax=ax,
             )
         else:
-            sns.barplot(
+            sns.violinplot(
                 data=data,    
                 x="python_version",
                 y="times",
