@@ -213,7 +213,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: benchmark-plots
-          path: '*.png'
+          path: '*.svg'
           if-no-files-found: error
           overwrite: true
           retention-days: 10
