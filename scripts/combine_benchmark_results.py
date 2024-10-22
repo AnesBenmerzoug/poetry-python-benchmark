@@ -13,9 +13,9 @@ from pathlib import Path
 def main():
     """Combines json files that result from calling hyperfine several
     times for different commands.
-    
+
     An example content of such a json file looks like:
-    
+
     ```json
     {
         "results": [
@@ -49,7 +49,7 @@ def main():
         with json_file.open() as f:
             data = json.load(f)
             all_results.extend(data["results"])
-    
+
     target_file = root_dir / "combined_stats.json"
     with target_file.open("w") as f:
         json.dump({"results": all_results}, f)
